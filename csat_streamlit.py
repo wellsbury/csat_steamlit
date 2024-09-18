@@ -1,13 +1,24 @@
 # Import Python packages
+import os
 import streamlit as st
 import pandas as pd
 from snowflake.snowpark import Session
+from snowflake.snowpark.context import get_active_session
 from datetime import datetime
 
 st.title(':book: CSAT Annotation Tool')
 
+#more secure version using environment variables
+def create_session():
+   #Creates a Snowflake session and caches it for performance optimization.
+    return Session.builder.configs(
+        {"user" :os.getenv("SNOWFLAKE_USER"),
+        "password" : os.getenv("SNOWFLAKE_PASSWORD"),
+        "account" : os.getenv("SNOWFLAKE_ACCOUNT")}).create()
+
 # Get Snowflake session
-#session = get_active_session()
+session=create_session()
+session = get_active_session()
 
 if session is None:
     st.error("Failed to connect to Snowflake. Please check your credentials.")
